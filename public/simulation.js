@@ -62,6 +62,14 @@
 
   updateLoop();
 
+  const loadData = async () => {
+    const response = await fetch('/api/load-data');
+    const json = await response.json();
+    console.log(json.data);
+  }
+
+  loadData();
+
   Render.lookAt(render, {
     min: { x: 0, y: 0 },
     max: { x: 800, y: 600 },
