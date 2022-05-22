@@ -1,3 +1,4 @@
+#include <fstream>
 #include "u.h"
 
 U::U() {}
@@ -21,4 +22,12 @@ bool U::isTouchingGround() {
     } else {
         return false;
     }
+}
+
+void U::writeDimensions() {
+    std::ofstream file("data/dimensions.tsv");
+    file << centerOfMass_m << "\t";
+    file << baseLength_m << "\t";
+    file << sideHeight_m << "\n";
+    file.close();
 }

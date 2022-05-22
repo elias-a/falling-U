@@ -18,6 +18,7 @@ int main() {
     int granularity = 1000;
 
     U u(centerOfMass_m, baseLength_m, sideHeight_m, position_m, velocity_m_s, angular_position_rad, angular_velocity_rad_s);
+    u.writeDimensions();
 
     Simulation sim(timeStep_s, u, granularity);
     sim.propagate();

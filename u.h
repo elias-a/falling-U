@@ -13,4 +13,5 @@ class U {
         U();
         U(double cm, double b, double s, double x, double v, double theta, double omega);
         bool isTouchingGround();
+        void writeDimensions();
 };
