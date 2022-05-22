@@ -5,7 +5,7 @@
   const Render = Matter.Render;
   const World = Matter.World;
   const Bodies = Matter.Bodies;
-  const Body = Matter.Body;
+  const Composite = Matter.Composite;
 
   const engine = Engine.create();
 
@@ -28,44 +28,29 @@
   const rightSide = Bodies.rectangle(600, 300, 2, 120);
   const bottom = Bodies.rectangle(550, 360, 100, 2);
 
-  World.add(engine.world, [ground, leftSide, rightSide, bottom]);
+  const uShape = Composite.create()
+  Composite.add(uShape, leftSide);
+  Composite.add(uShape, rightSide);
+  Composite.add(uShape, bottom);
 
-  let i = 1;
-  const numberOfLoops = 20;
-  function updateLoop() {
+  World.add(engine.world, [ground, uShape]);
+
+  function updateLoop(data) {
     setTimeout(function() {
-      const xChange = 0;
-      const yChange = 10;
+      const row = data.shift();
+      Composite.translate(uShape, { x: 0, y: 0.2 });
 
-      const newLeft = {
-        x: leftSide.position.x + xChange,
-        y: leftSide.position.y + yChange,
-      };
-      const newRight = {
-        x: rightSide.position.x + xChange,
-        y: rightSide.position.y + yChange,
-      };
-      const newBottom = {
-        x: bottom.position.x + xChange,
-        y: bottom.position.y + yChange,
-      };
-
-      Body.setPosition(leftSide, newLeft);
-      Body.setPosition(rightSide, newRight);
-      Body.setPosition(bottom, newBottom);
-
-      if (i++ < numberOfLoops) {
-        updateLoop();
+      if (data.length >= 1) {
+        updateLoop(data);
       }
-    }, 50);
+    }, 5);
   }
-
-  updateLoop();
 
   const loadData = async () => {
     const response = await fetch('/api/load-data');
     const json = await response.json();
-    console.log(json.data);
+
+    updateLoop(json.data);
   }
 
   loadData();
