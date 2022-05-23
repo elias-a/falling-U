@@ -9,19 +9,27 @@ const PORT = 19999;
 
 app.get('/api/load-data', (_req, res) => {
     Promise.all([
+        fs.readFileAsync('data/initial.tsv'),
         fs.readFileAsync('data/dimensions.tsv'),
-        fs.readFileAsync('data/out.tsv'),
+        fs.readFileAsync('data/translations.tsv'),
     ]).then(data => {
-        const firstRow = data[0].toString().split('\n')[0];
-        const items = firstRow.split("\t");
-        const dimensions = {
-            cm: parseFloat(items[0]),
-            base: parseFloat(items[1]),
-            height: parseFloat(items[2]),
+        const firstRowInitial = data[0].toString().split('\n')[0];
+        const initialItems = firstRowInitial.split("\t");
+        const initial = {
+            y: parseFloat(initialItems[0]),
+            theta: parseFloat(initialItems[1]),
         };
 
-        const state = [];
-        for (const row of data[1].toString().split('\n')) {
+        const firstRowDims = data[1].toString().split('\n')[0];
+        const dimItems = firstRowDims.split("\t");
+        const dimensions = {
+            cm: parseFloat(dimItems[0]),
+            base: parseFloat(dimItems[1]),
+            height: parseFloat(dimItems[2]),
+        };
+
+        const translations = [];
+        for (const row of data[2].toString().split('\n')) {
             const items = row.split("\t");
 
             let y;
@@ -33,13 +41,17 @@ app.get('/api/load-data', (_req, res) => {
                 continue;
             }
 
-            state.push({
+            translations.push({
                 y: y,
                 theta: theta,
             });
         }
 
-        res.json({ data: state, dimensions: dimensions });
+        res.json({
+            data: translations,
+            dimensions: dimensions,
+            initial: initial,
+        });
     });
 });
 

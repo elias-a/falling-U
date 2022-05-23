@@ -19,6 +19,7 @@
   });
 
   let uShape;
+  let multiplier;
 
   Render.run(render);
 
@@ -27,18 +28,18 @@
     return maxCanvasHeight / maxHeight;
   }
 
-  const addObjects = (dimensions, data) => {
+  const addObjects = (dimensions, initialConditions) => {
     // Construct ground
     const groundY = 600;
     const groundHeight = 50;
     const ground = Bodies.rectangle(400, groundY, 1000, groundHeight, { isStatic: true });
 
-    const multiplier = getMultiplier(data[0].y * 1.25);
+    multiplier = getMultiplier(initialConditions.y * 1.25);
 
     const baseX = 400;
     const leftX = baseX - dimensions.base * multiplier / 2;
     const rightX = baseX + dimensions.base * multiplier / 2;
-    const baseY = groundY - groundHeight / 2 - data[0].y * multiplier;
+    const baseY = groundY - groundHeight / 2 - initialConditions.y * multiplier;
     const leftY = baseY - dimensions.height * multiplier / 2;
     const rightY = baseY - dimensions.height * multiplier / 2;
 
@@ -58,7 +59,7 @@
   function updateLoop(data) {
     setTimeout(function() {
       const row = data.shift();
-      //Composite.translate(uShape, { x: 0, y: 0.2 });
+      Composite.translate(uShape, { x: 0, y: row.y * multiplier });
 
       if (data.length >= 1) {
         updateLoop(data);
@@ -70,7 +71,7 @@
     const response = await fetch('/api/load-data');
     const json = await response.json();
 
-    addObjects(json.dimensions, json.data);
+    addObjects(json.dimensions, json.initial);
     updateLoop(json.data);
   }
 

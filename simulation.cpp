@@ -9,6 +9,10 @@ Simulation::Simulation(double ts, U u, int g) {
     timeStep_s = ts;
     uObject = u;
     granularity = g;
+    previousState = {
+        u.position_m,
+        u.angular_position_rad,
+    };
 }
 
 void Simulation::verletStep() {
@@ -29,14 +33,38 @@ void Simulation::propagate() {
                 uObject.angular_position_rad,
             };
             state.push_back(currentState);
+
+            State diff = {
+                previousState.y - uObject.position_m,
+                previousState.theta - uObject.angular_position_rad,
+            };
+            translations.push_back(diff);
+
+            previousState = {
+                uObject.position_m,
+                uObject.angular_position_rad,
+            };
         }
     }
 }
 
 void Simulation::writeState() {
-    std::ofstream file("data/out.tsv");
+    std::ofstream outFile("data/out.tsv");
     for (const auto &el : state) {
-        file << el.y << "\t" << el.theta << "\n";
+        outFile << el.y << "\t" << el.theta << "\n";
     }
+    outFile.close();
+
+    std::ofstream translationsFile("data/translations.tsv");
+    for (const auto &el : translations) {
+        translationsFile << el.y << "\t" << el.theta << "\n";
+    }
+    translationsFile.close();
+}
+
+void Simulation::writeInitialConditions() {
+    std::ofstream file("data/initial.tsv");
+    file << uObject.position_m << "\t";
+    file << uObject.angular_position_rad << "\n";
     file.close();
 }

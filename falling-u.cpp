@@ -21,6 +21,7 @@ int main() {
     u.writeDimensions();
 
     Simulation sim(timeStep_s, u, granularity);
+    sim.writeInitialConditions();
     sim.propagate();
     sim.writeState();
 

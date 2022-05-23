@@ -15,11 +15,14 @@ class Simulation {
         double timeStep_s;
         U uObject;
         int granularity;
+        State previousState;
         std::vector<State> state;
+        std::vector<State> translations;
 
         Simulation();
         Simulation(double ts, U u, int g);
         void verletStep();
         void propagate();
         void writeState();
+        void writeInitialConditions();
 };
