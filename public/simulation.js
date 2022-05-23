@@ -18,27 +18,47 @@
     },
   });
 
+  let uShape;
+
   Render.run(render);
 
-  // Construct ground
-  const ground = Bodies.rectangle(395, 600, 815, 50, { isStatic: true });
+  const getMultiplier = (maxHeight) => {
+    const maxCanvasHeight = 600;
+    return maxCanvasHeight / maxHeight;
+  }
 
-  // Construct U
-  const leftSide = Bodies.rectangle(500, 300, 2, 120);
-  const rightSide = Bodies.rectangle(600, 300, 2, 120);
-  const bottom = Bodies.rectangle(550, 360, 100, 2);
+  const addObjects = (dimensions, data) => {
+    // Construct ground
+    const groundY = 600;
+    const groundHeight = 50;
+    const ground = Bodies.rectangle(400, groundY, 1000, groundHeight, { isStatic: true });
 
-  const uShape = Composite.create()
-  Composite.add(uShape, leftSide);
-  Composite.add(uShape, rightSide);
-  Composite.add(uShape, bottom);
+    const multiplier = getMultiplier(data[0].y * 1.25);
 
-  World.add(engine.world, [ground, uShape]);
+    const baseX = 400;
+    const leftX = baseX - dimensions.base * multiplier / 2;
+    const rightX = baseX + dimensions.base * multiplier / 2;
+    const baseY = groundY - groundHeight / 2 - data[0].y * multiplier;
+    const leftY = baseY - dimensions.height * multiplier / 2;
+    const rightY = baseY - dimensions.height * multiplier / 2;
+
+    // Construct U
+    const leftSide = Bodies.rectangle(leftX, leftY, 0.5, dimensions.height * multiplier);
+    const rightSide = Bodies.rectangle(rightX, rightY, 0.5, dimensions.height * multiplier);
+    const bottom = Bodies.rectangle(baseX, baseY, dimensions.base * multiplier, 0.5);
+
+    uShape = Composite.create()
+    Composite.add(uShape, leftSide);
+    Composite.add(uShape, rightSide);
+    Composite.add(uShape, bottom);
+
+    World.add(engine.world, [ground, uShape]);
+  }
 
   function updateLoop(data) {
     setTimeout(function() {
       const row = data.shift();
-      Composite.translate(uShape, { x: 0, y: 0.2 });
+      //Composite.translate(uShape, { x: 0, y: 0.2 });
 
       if (data.length >= 1) {
         updateLoop(data);
@@ -50,6 +70,7 @@
     const response = await fetch('/api/load-data');
     const json = await response.json();
 
+    addObjects(json.dimensions, json.data);
     updateLoop(json.data);
   }
 

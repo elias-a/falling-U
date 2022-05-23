@@ -8,7 +8,7 @@ int main() {
     double sideHeight_m = 0.11;
 
     // Initial conditions
-    double position_m = 2.;
+    double position_m = 1.;
     double velocity_m_s = 0.;
     double angular_position_rad = 0.;
     double angular_velocity_rad_s = 0.;
