@@ -1,18 +1,27 @@
-const fs = require('fs');
 const express = require('express');
 const app = express();
+
+const fs = require('fs');
+const util = require('util');
+fs.readFileAsync = util.promisify(fs.readFile);
 
 const PORT = 19999;
 
 app.get('/api/load-data', (_req, res) => {
-    fs.readFile('data/out.tsv', (err, data) => {
-        if (err) {
-            console.error(err);
-            return;
-        }
+    Promise.all([
+        fs.readFileAsync('data/dimensions.tsv'),
+        fs.readFileAsync('data/out.tsv'),
+    ]).then(data => {
+        const firstRow = data[0].toString().split('\n')[0];
+        const items = firstRow.split("\t");
+        const dimensions = {
+            cm: parseFloat(items[0]),
+            base: parseFloat(items[1]),
+            height: parseFloat(items[2]),
+        };
 
         const state = [];
-        for (const row of data.toString().split('\n')) {
+        for (const row of data[1].toString().split('\n')) {
             const items = row.split("\t");
 
             let y;
@@ -30,7 +39,7 @@ app.get('/api/load-data', (_req, res) => {
             });
         }
 
-        res.json({ data: state });
+        res.json({ data: state, dimensions: dimensions });
     });
 });
 
