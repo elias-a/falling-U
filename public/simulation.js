@@ -39,7 +39,7 @@
     const baseX = 400;
     const leftX = baseX - dimensions.base * multiplier / 2;
     const rightX = baseX + dimensions.base * multiplier / 2;
-    const baseY = groundY - groundHeight / 2 - initialConditions.y * multiplier;
+    const baseY = groundY - groundHeight / 2 - (initialConditions.y - dimensions.cm) * multiplier;
     const leftY = baseY - dimensions.height * multiplier / 2;
     const rightY = baseY - dimensions.height * multiplier / 2;
 
@@ -48,7 +48,7 @@
     const rightSide = Bodies.rectangle(rightX, rightY, 0.5, dimensions.height * multiplier);
     const bottom = Bodies.rectangle(baseX, baseY, dimensions.base * multiplier, 0.5);
 
-    uShape = Composite.create()
+    uShape = Composite.create();
     Composite.add(uShape, leftSide);
     Composite.add(uShape, rightSide);
     Composite.add(uShape, bottom);

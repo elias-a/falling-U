@@ -9,9 +9,14 @@ struct State {
 };
 
 class Simulation {
-    static const double gravity_m_s2;
-
     public:
+        Simulation();
+        Simulation(double ts, U u, int g);
+        void propagate();
+        void writeState();
+        void writeInitialConditions();
+    private:
+        static const double gravity_m_s2;
         double timeStep_s;
         U uObject;
         int granularity;
@@ -19,10 +24,6 @@ class Simulation {
         std::vector<State> state;
         std::vector<State> translations;
 
-        Simulation();
-        Simulation(double ts, U u, int g);
         void verletStep();
-        void propagate();
-        void writeState();
-        void writeInitialConditions();
+        void storeData();
 };

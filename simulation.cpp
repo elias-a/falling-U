@@ -28,24 +28,11 @@ void Simulation::propagate() {
         verletStep();
 
         if (counter++ % granularity == 0) {
-            State currentState = {
-                uObject.position_m,
-                uObject.angular_position_rad,
-            };
-            state.push_back(currentState);
-
-            State diff = {
-                previousState.y - uObject.position_m,
-                previousState.theta - uObject.angular_position_rad,
-            };
-            translations.push_back(diff);
-
-            previousState = {
-                uObject.position_m,
-                uObject.angular_position_rad,
-            };
+            storeData();
         }
     }
+
+    storeData();
 }
 
 void Simulation::writeState() {
@@ -67,4 +54,23 @@ void Simulation::writeInitialConditions() {
     file << uObject.position_m << "\t";
     file << uObject.angular_position_rad << "\n";
     file.close();
+}
+
+void Simulation::storeData() {
+    State currentState = {
+        uObject.position_m,
+        uObject.angular_position_rad,
+    };
+    state.push_back(currentState);
+
+    State diff = {
+        previousState.y - uObject.position_m,
+        previousState.theta - uObject.angular_position_rad,
+    };
+    translations.push_back(diff);
+
+    previousState = {
+        uObject.position_m,
+        uObject.angular_position_rad,
+    };
 }
