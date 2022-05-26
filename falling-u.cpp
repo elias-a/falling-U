@@ -3,7 +3,6 @@
 
 int main() {
     // Dimensions of the U
-    double centerOfMass_m = 0.04;
     double baseLength_m = 0.08;
     double sideHeight_m = 0.11;
 
@@ -17,7 +16,7 @@ int main() {
     double timeStep_s = 1e-6;
     int granularity = 1000;
 
-    U u(centerOfMass_m, baseLength_m, sideHeight_m, position_m, velocity_m_s, angular_position_rad, angular_velocity_rad_s);
+    U u(baseLength_m, sideHeight_m, position_m, velocity_m_s, angular_position_rad, angular_velocity_rad_s);
     u.writeDimensions();
 
     Simulation sim(timeStep_s, u, granularity);

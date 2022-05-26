@@ -3,14 +3,15 @@
 
 U::U() {}
 
-U::U(double cm, double b, double s, double x, double v, double theta, double omega) {
-    centerOfMass_m = cm;
+U::U(double b, double s, double x, double v, double theta, double omega) {
     baseLength_m = b;
     sideHeight_m = s;
     position_m = x;
     velocity_m_s = v;
     angular_position_rad = theta;
     angular_velocity_rad_s = omega;
+
+    centerOfMass_m = computeCenterOfMass(b, s);
 }
 
 bool U::isTouchingGround() {
@@ -30,4 +31,8 @@ void U::writeDimensions() {
     file << baseLength_m << "\t";
     file << sideHeight_m << "\n";
     file.close();
+}
+
+double U::computeCenterOfMass(double b, double s) {
+    return s * s / (2 * s + b);
 }
