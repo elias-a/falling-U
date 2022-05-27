@@ -1,3 +1,4 @@
+#include <cmath>
 #include <fstream>
 #include "u.h"
 
@@ -15,8 +16,14 @@ U::U(double b, double s, double x, double v, double theta, double omega) {
 }
 
 bool U::isTouchingGround() {
-    // Assume angular position is 0.
-    double distanceFromGround = position_m - centerOfMass_m;
+    double distanceFromGround;
+    double tolerance = 1e-6;
+    
+    if (std::fabs(angular_position_rad - M_PI) < tolerance) {
+        distanceFromGround = position_m - (sideHeight_m - centerOfMass_m);
+    } else {
+        distanceFromGround = position_m - centerOfMass_m;
+    }
 
     if (distanceFromGround <= 0) {
         return true;

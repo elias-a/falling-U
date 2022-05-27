@@ -1,3 +1,4 @@
+#include <cmath>
 #include "u.h"
 #include "simulation.h"
 

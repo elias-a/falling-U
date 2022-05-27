@@ -5,7 +5,7 @@
   const Render = Matter.Render;
   const World = Matter.World;
   const Bodies = Matter.Bodies;
-  const Composite = Matter.Composite;
+  const Body = Matter.Body;
 
   const engine = Engine.create();
 
@@ -18,7 +18,9 @@
     },
   });
 
-  let uShape;
+  let leftSide;
+  let rightSide;
+  let bottom;
   let multiplier;
 
   Render.run(render);
@@ -44,22 +46,23 @@
     const rightY = baseY - dimensions.height * multiplier / 2;
 
     // Construct U
-    const leftSide = Bodies.rectangle(leftX, leftY, 0.5, dimensions.height * multiplier);
-    const rightSide = Bodies.rectangle(rightX, rightY, 0.5, dimensions.height * multiplier);
-    const bottom = Bodies.rectangle(baseX, baseY, dimensions.base * multiplier, 0.5);
+    leftSide = Bodies.rectangle(leftX, leftY, 0.5, dimensions.height * multiplier);
+    rightSide = Bodies.rectangle(rightX, rightY, 0.5, dimensions.height * multiplier);
+    bottom = Bodies.rectangle(baseX, baseY, dimensions.base * multiplier, 0.5);
 
-    uShape = Composite.create();
-    Composite.add(uShape, leftSide);
-    Composite.add(uShape, rightSide);
-    Composite.add(uShape, bottom);
+    World.add(engine.world, [ground, leftSide, rightSide, bottom]);
 
-    World.add(engine.world, [ground, uShape]);
+    Body.rotate(leftSide, initialConditions.theta, { x: baseX, y: baseY - dimensions.cm * multiplier });
+    Body.rotate(rightSide, initialConditions.theta, { x: baseX, y: baseY - dimensions.cm * multiplier });
+    Body.rotate(bottom, initialConditions.theta, { x: baseX, y: baseY - dimensions.cm * multiplier });
   }
 
   function updateLoop(data) {
     setTimeout(function() {
       const row = data.shift();
-      Composite.translate(uShape, { x: 0, y: row.y * multiplier });
+      Body.translate(leftSide, { x: 0, y: row.y * multiplier });
+      Body.translate(rightSide, { x: 0, y: row.y * multiplier });
+      Body.translate(bottom, { x: 0, y: row.y * multiplier });
 
       if (data.length >= 1) {
         updateLoop(data);
