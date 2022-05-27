@@ -16,5 +16,6 @@ class U {
         double baseLength_m;
         double sideHeight_m;
 
+        double computeDistanceFromGround();
         double computeCenterOfMass(double b, double s);
 };

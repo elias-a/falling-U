@@ -15,15 +15,33 @@ U::U(double b, double s, double x, double v, double theta, double omega) {
     centerOfMass_m = computeCenterOfMass(b, s);
 }
 
-bool U::isTouchingGround() {
-    double distanceFromGround;
+double U::computeDistanceFromGround() {
+    double centerOfMassHeight;
     double tolerance = 1e-6;
     
     if (std::fabs(angular_position_rad - M_PI) < tolerance) {
-        distanceFromGround = position_m - (sideHeight_m - centerOfMass_m);
+        centerOfMassHeight = sideHeight_m - centerOfMass_m;
+    } else if (
+        angular_position_rad >= M_PI / 2 && 
+        angular_position_rad <= 3 * M_PI / 2
+    ) {
+        centerOfMassHeight = (
+            baseLength_m + std::cos(M_PI - angular_position_rad) * 
+            (2 * (sideHeight_m - centerOfMass_m) * 
+            std::sin(M_PI - angular_position_rad) -
+            baseLength_m * std::cos(M_PI - angular_position_rad))
+        ) / (2 * std::sin(M_PI - angular_position_rad));
     } else {
-        distanceFromGround = position_m - centerOfMass_m;
+        centerOfMassHeight = centerOfMass_m / std::cos(angular_position_rad) + 
+            std::sin(angular_position_rad) * (baseLength_m / 2 - 
+            centerOfMass_m * std::tan(angular_position_rad));
     }
+
+    return position_m - centerOfMassHeight;
+}
+
+bool U::isTouchingGround() {
+    double distanceFromGround = computeDistanceFromGround();
 
     if (distanceFromGround <= 0) {
         return true;
