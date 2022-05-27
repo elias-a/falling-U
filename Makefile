@@ -1,8 +1,8 @@
 CXX=g++
 CXXFLAGS=-std=c++11
 
-OBJECTS=falling-u
-OBJECTS_LINK=u.cpp simulation.cpp
+OBJECTS=simulation/falling-u
+OBJECTS_LINK=simulation/u.cpp simulation/simulation.cpp
 
 all: $(OBJECTS)
 

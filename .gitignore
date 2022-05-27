@@ -1,4 +1,4 @@
-.DS_Store
+**/.DS_Store
 node_modules
-*.o
+**/*.o
 data/

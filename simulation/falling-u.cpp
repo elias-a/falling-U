@@ -1,4 +1,5 @@
 #include <cmath>
+#include <iostream>
 #include "u.h"
 #include "simulation.h"
 
