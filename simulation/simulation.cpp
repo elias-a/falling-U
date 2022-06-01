@@ -1,3 +1,4 @@
+#include <cmath>
 #include <fstream>
 #include "simulation.h"
 
@@ -5,7 +6,7 @@ const double Simulation::gravity_m_s2 = -9.81;
 
 Simulation::Simulation() {}
 
-Simulation::Simulation(double ts, U u, int g) {
+Simulation::Simulation(double ts, U u, int g, double f) {
     timeStep_s = ts;
     uObject = u;
     granularity = g;
@@ -13,6 +14,7 @@ Simulation::Simulation(double ts, U u, int g) {
         u.position_m,
         u.angular_position_rad,
     };
+    surfaceFactor = f;
 }
 
 void Simulation::verletStep() {
@@ -21,18 +23,28 @@ void Simulation::verletStep() {
     uObject.velocity_m_s += timeStep_s * gravity_m_s2;
 }
 
+void Simulation::applyImpulse() {
+    uObject.velocity_m_s *= -1 * surfaceFactor;
+}
+
 void Simulation::propagate() {
-    // Loop until the U hits the ground.
     int counter = 0;
-    while (!uObject.isTouchingGround()) {
+    while (true) {
+        if (uObject.isTouchingGround() && std::fabs(uObject.velocity_m_s) < 1e-5) {
+            storeData();
+            break;
+        }
+        
+        if (uObject.isTouchingGround() && uObject.velocity_m_s < 0) {
+            applyImpulse();
+        }
+
         verletStep();
 
         if (counter++ % granularity == 0) {
             storeData();
         }
     }
-
-    storeData();
 }
 
 void Simulation::writeState() {

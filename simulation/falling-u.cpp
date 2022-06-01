@@ -16,6 +16,7 @@ int main() {
     // Simulation variables
     double timeStep_s;
     int granularity;
+    double surfaceFactor;
 
     std::ifstream file("parameters.txt");
     file >> baseLength_m;
@@ -26,12 +27,13 @@ int main() {
     file >> angular_velocity_rad_s;
     file >> timeStep_s;
     file >> granularity;
+    file >> surfaceFactor;
     file.close();
 
     U u(baseLength_m, sideHeight_m, position_m, velocity_m_s, angular_position_rad, angular_velocity_rad_s);
     u.writeDimensions();
 
-    Simulation sim(timeStep_s, u, granularity);
+    Simulation sim(timeStep_s, u, granularity, surfaceFactor);
     sim.writeInitialConditions();
     sim.propagate();
     sim.writeState();
